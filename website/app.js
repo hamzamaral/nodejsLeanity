@@ -1,17 +1,55 @@
 var http = require("http");
 
 var server = http.createServer((request, response) => {
-    // console.log(request.url, request.method);
-    // console.log(response.statusCode);
+    
+    if(request.url == '/') {
+        response.writeHead(200, {"Content-Type": "text/html"});
 
-    response.setHeader("Content-Type", "text/html");
-    response.statusCode = 200;
-    response.statusMessage = "OK";
+        response.write(`
+            <html>
+                <head>
+                    <title>anasayfa</title>
+                    <meta charset="utf-8">
+                </head>            
+                <body>
+                    <h1>Anasayfa</h1>
+                </body>
+            </html>`);
+        
+        response.end();
+    }
+    else if(request.url == "/blogs") {
+        response.writeHead(200, {"Content-Type": "text/html"});
 
-    response.write("<h1>anasayfa</h1>");
-    response.write("<p>urunler</p>");
+        response.write(`
+            <html>
+                <head>
+                    <title>blogs</title>
+                    <meta charset="utf-8">
+                </head>            
+                <body>
+                    <h1>blog listesi</h1>
+                </body>
+            </html>`);
+        
+        response.end();
+    } else {
+        response.writeHead(404, {"Content-Type": "text/html"});
 
-    response.end();
+        response.write(`
+            <html>
+                <head>
+                    <title>404</title>
+                    <meta charset="utf-8">
+                </head>            
+                <body>
+                    <h1>aradığınız kaynak bulunamadı.</h1>
+                </body>
+            </html>`);
+        
+        response.end();
+    }
+
 });
 
 server.listen(3000);
