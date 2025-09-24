@@ -3,8 +3,12 @@ const express = require("express");
 const app = express();
 
 const path = require("path");
-// Bu modül, kodunuzun farklı işletim sistemlerinde
-//  (Windows, macOS, Linux) sorunsuz çalışması için kritik öneme sahiptir.
+
+app.use("/libs", express.static(path.join(__dirname, "node_modules")));
+app.use("/static", express.static(path.join(__dirname, "public")));
+//     <img src="/static/images/1.jpeg" alt="">
+// Tarayıcı /static ile başlayan bir dosya istediğinde, Express doğrudan
+//  public klasörünün içine bakar.
 
 app.use("/blogs/:blogid", function(req, res) {
     console.log(__dirname);
