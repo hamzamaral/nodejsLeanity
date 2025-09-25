@@ -4,6 +4,27 @@ const app = express();
 
 app.set("view engine", "ejs");
 
+
+const mysql = require("mysql2");
+const config = require("./config");
+
+let connection = mysql.createConnection(config.db);
+
+connection.connect(function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    connection.query("select * from blog", function(err, result) {
+        console.log(result[0].baslik);
+        console.log(result[1].baslik);
+    })
+
+    console.log("mysql server bağlantısı yapıldı");
+})
+
+
+
 const path = require("path");
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
