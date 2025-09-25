@@ -2,13 +2,11 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../data/db");
 
 const Blog = sequelize.define("blog", {
-    blogid: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
     baslik: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    url: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -31,20 +29,9 @@ const Blog = sequelize.define("blog", {
     onay: {
         type: DataTypes.BOOLEAN,
         allowNull: false
-    },
-    categoryid: {
-        type: DataTypes.INTEGER,
-        allowNull: false
     }
+}, {
+    timestamps: true
 });
-
-async function sync() {
-    await Blog.sync({ force: true });
-    console.log("blog tablosu eklendi");
-}
-
-// migrations
-
-sync();
 
 module.exports = Blog;
