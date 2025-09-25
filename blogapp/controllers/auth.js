@@ -5,31 +5,24 @@ const config = require("../config");
 const ctypto = require("crypto");
 const { Op } = require("sequelize");
 
-exports.get_register = async function(req, res) {
+exports.get_register = async function(req, res, next) {
     try {
         return res.render("auth/register", {
             title: "register"
         });
     }
     catch(err) {
-        console.log(err);
+        next(err);
     }
 }
 
-exports.post_register = async function(req, res) {
+exports.post_register = async function(req, res, next) {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     try {
-        const user  = await User.findOne({ where: { email: email }});
-        if(user) {
-            req.session.message = { text: "Girdiğiniz email adresiyle daha önce kayıt olunmuş.", class: "warning"};
-            return res.redirect("login");
-        }
-        const newUser = await User.create({ fullname: name, email: email, password: hashedPassword });
+        // throw new Error("hata oluştu");
+        const newUser = await User.create({ fullname: name, email: email, password: password });
 
         emailService.sendMail({
             from: config.email.from,
@@ -42,11 +35,25 @@ exports.post_register = async function(req, res) {
         return res.redirect("login");
     }
     catch(err) {
-        console.log(err);
+        let msg = "";
+
+        if(err.name == "SequelizeValidationError" || err.name == "SequelizeUniqueConstraintError") {
+            for(let e of err.errors) {
+                msg += e.message + " "
+            }
+
+            return res.render("auth/register", {
+                title: "register",
+                message: {text: msg, class:"danger"}
+            });
+
+        } else {
+            next(err);
+        }        
     }
 }
 
-exports.get_login = async function(req, res) {
+exports.get_login = async function(req, res, next) {
     const message = req.session.message;
     delete req.session.message;
     try {
@@ -57,22 +64,22 @@ exports.get_login = async function(req, res) {
         });
     }
     catch(err) {
-        console.log(err);
+        next(err);
     }
 }
 
 
-exports.get_logout = async function(req, res) {
+exports.get_logout = async function(req, res, next) {
     try {
         await req.session.destroy();
         return res.redirect("/account/login");
     }
     catch(err) {
-        console.log(err);
+        next(err);
     }
 }
 
-exports.post_login = async function(req, res) {
+exports.post_login = async function(req, res, next) {
     const email = req.body.email;
     const password = req.body.password;
 
@@ -115,7 +122,7 @@ exports.post_login = async function(req, res) {
         });     
     }
     catch(err) {
-        console.log(err);
+        next(err);
     }
 }
 

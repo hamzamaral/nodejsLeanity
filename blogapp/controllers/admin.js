@@ -95,12 +95,33 @@ exports.post_blog_create = async function(req, res) {
     const baslik = req.body.baslik;
     const altbaslik = req.body.altbaslik;
     const aciklama = req.body.aciklama;
-    const resim = req.file.filename;
     const anasayfa = req.body.anasayfa == "on" ? 1:0;
     const onay = req.body.onay == "on"? 1:0;
     const userid = req.session.userid;
+    let resim = "";
 
     try {
+
+        if(baslik == "") {
+            throw new Error("başlık boş geçilemez");
+        }
+
+        if(baslik.length < 5 || baslik.length > 20) {
+            throw new Error("başlık 5-20 karakter aralığında olmalıdır.");
+        }
+
+        if(aciklama == "") {
+            throw new Error("aciklama boş geçilemez");
+        }
+
+        if(req.file) {
+            resim = req.file.filename;
+
+            fs.unlink("./public/images/" + req.body.resim, err => {
+                console.log(err);
+            });
+        }
+
         await Blog.create({
             baslik: baslik,
             url: slugField(baslik),
@@ -114,7 +135,22 @@ exports.post_blog_create = async function(req, res) {
         res.redirect("/admin/blogs?action=create");
     }
     catch(err) {
-        console.log(err);
+        let hataMesaji = "";
+
+        if(err instanceof Error) {
+            hataMesaji += err.message;
+
+            res.render("admin/blog-create", {
+                title: "add blog",
+                categories: await Category.findAll(),
+                message: {text: hataMesaji, class: "danger"},
+                values: {
+                    baslik: baslik,
+                    altbaslik: altbaslik,
+                    aciklama: aciklama
+                }
+            });
+        }
     }
 }
 
@@ -125,7 +161,7 @@ exports.get_category_create = async function(req, res) {
         });
     }
     catch(err) {
-        console.log(err);
+        res.redirect("/500");
     }
 }
 
@@ -192,13 +228,11 @@ exports.post_blog_edit = async function(req, res) {
 
     const anasayfa = req.body.anasayfa == "on" ? 1 : 0;
     const onay = req.body.onay == "on" ? 1 : 0;
+    const isAdmin = req.session.roles.includes("admin");
 
     try {
         const blog = await Blog.findOne({
-            where: {
-                id: blogid,
-                userId: userid
-            },
+            where: isAdmin ? {id : blogid} : { id: blogid, userId: userid },
             include: {
                 model: Category,
                 attributes: ["id"]
