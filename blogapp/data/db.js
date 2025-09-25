@@ -1,16 +1,23 @@
 const mysql = require("mysql2");
 const config = require("../config");
 
-let connection = mysql.createConnection(config.db);
+const Sequelize = require("sequelize");
 
-connection.connect(function(err) {
-    if(err) {
-        return console.log(err);
-    }
-
-    console.log("mysql server bağlantısı yapıldı");
+const sequelize = new Sequelize(config.db.database, config.db.user, config.db.password, {
+    dialect: "mysql",
+    host: config.db.host
 });
 
-module.exports = connection.promise();
+async function connect() {
+    try {
+        await sequelize.authenticate();
+        console.log("mysql server bağlantısı yapıldı");
+    }
+    catch(err) {
+        console.log("bağlantı hatası ", err);
+    }
+}
 
-// promise, async-await => async
+connect();
+
+module.exports = sequelize;
