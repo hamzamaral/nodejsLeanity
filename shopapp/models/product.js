@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const { Schema } = require("mongoose");
+
+const commentSchema = mongoose.Schema({
+    text: String,
+    username: String,
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    // user: { type: Schema.Types.ObjectId, ref: "User"}
+});
 
 const productSchema = mongoose.Schema({
     name: String,
@@ -10,7 +21,9 @@ const productSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    isActive: Boolean
+    isActive: Boolean,
+    category: { type: Schema.Types.ObjectId, ref: "Category" },
+    comments: [commentSchema]
 });
 
 function validateProduct(product) {
@@ -19,12 +32,15 @@ function validateProduct(product) {
         price: Joi.number().required(),
         description: Joi.string(),
         imageUrl: Joi.string(),
-        isActive: Joi.boolean()
+        isActive: Joi.boolean(),
+        category: Joi.string(),
+        comments: Joi.array()
     });
 
     return schema.validate(product);
 }
 
 const Product = mongoose.model("Product", productSchema); 
+const Comment = mongoose.model("Comment", commentSchema); 
 
-module.exports = { Product, validateProduct };
+module.exports = { Product, Comment, validateProduct };
