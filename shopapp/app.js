@@ -5,12 +5,14 @@ const mongoose = require("mongoose");
 
 const products = require("./routes/products");
 const categories = require("./routes/categories");
+const users = require("./routes/users");
 const home = require("./routes/home");
 
 app.use(express.json());
 
 app.use("/api/products", products);
 app.use("/api/categories", categories);
+app.use("/api/users", users);
 app.use("/", home);
 
 const username = "mhamamaralmhm65_db_user";
@@ -19,9 +21,6 @@ const database = "nodejsdeneme";
 
 (async () => {
   try {
-    // mongodb+srv://mhamamaralmhm65_db_user:MasF8vvuSpRDqiYT@cluster0.4veashr.mongodb.net/
-
-    // mongodb+srv://mhamamaralmhm65:<db_password>@cluster0.nkj6cbr.mongodb.net/  MasF8vvuSpRDqiYT
     await mongoose.connect(
       `mongodb+srv://${username}:${password}@cluster0.4veashr.mongodb.net/${database}?retryWrites=true&w=majority`
     );
@@ -34,5 +33,3 @@ const database = "nodejsdeneme";
 app.listen(3000, () => {
   console.log("listening on port 3000");
 });
-
- 

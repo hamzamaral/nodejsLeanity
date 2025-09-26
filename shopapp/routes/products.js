@@ -13,7 +13,9 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     const { error } =  validateProduct(req.body);
 
-    if(error) { return res.status(400).send(error.details[0].message);     }
+    if(error) {
+        return res.status(400).send(error.details[0].message);
+    }
 
     const product = new Product({
         name: req.body.name,
@@ -29,7 +31,7 @@ router.post("/", async (req, res) => {
     res.send(newProduct);
 });
 
-router.post("/comment/:id", async (req, res) => {
+router.put("/comment/:id", async (req, res) => {
     const product = await Product.findById(req.params.id);
     if(!product) {
         return res.status(404).send("aradığınız ürün bulunamadı.");
@@ -51,12 +53,7 @@ router.delete("/comment/:id", async (req, res) => {
     if(!product) {
         return res.status(404).send("aradığınız ürün bulunamadı.");
     }
-    
     const comment = product.comments.id(req.body.commentid);
-
-    if(!comment) {
-        return res.status(404).send("aradığınız yorum bulunamadı.");
-    }
     comment.remove();
 
     const updatedProduct = await product.save();
