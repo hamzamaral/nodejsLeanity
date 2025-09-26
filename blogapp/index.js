@@ -2,10 +2,11 @@
 const express = require("express");
 const app = express();
 
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const csurf = require("csurf");
+
+const cookieParser = require('cookie-parser'); // Tarayıcıdaki çerezleri (cookie) okumak için
+const session = require('express-session'); // Kullanıcı oturumlarını (session) yönetmek için
+const SequelizeStore = require("connect-session-sequelize")(session.Store); // Oturumları veritabanında saklamak için
+const csurf = require("csurf"); // CSRF ataklarına karşı güvenlik sağlamak için
 
 // node modules
 const path = require("path");
@@ -32,17 +33,21 @@ const User = require("./models/user");
 const Role = require("./models/role");
 
 // middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(session({
-    secret: "hello world",
+app.use(express.urlencoded({ extended: true }));// Kullanıcının HTML formları (<form>) aracılığıyla gönderdiği verileri
+//  (örneğin, bir kayıt formundaki kullanıcı adı ve şifre) sunucunun okuyup anlayabilmesini sağlar.
+app.use(cookieParser());// Tarayıcının sunucuya gönderdiği küçük bilgi parçacıkları olan çerezleri (cookie) okur. 
+// Bu, bir sonraki adım olan session (oturum) yönetimi için bir ön hazırlıktır.
+app.use(session({ //Kullanıcı için sunucu tarafında bir "oturum" başlatır, bu oturum bilgilerini saklar ve tarayıcıya bu oturuma ait bir kimlik (cookie olarak) gönderir.
+    secret: "hello world",//Size verilen giriş kartının kopyalanamaması için kullanılan gizli bir mühür veya imza gibidir. Bu sayede sahte kartlar yapılamaz.
     resave: false,
     saveUninitialized: false,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24
     },
     store: new SequelizeStore({
-        db: sequelize
+        db: sequelize//: Bu en kritik ayarlardan biridir. Etkinlik görevlisinin, sizin kayıt bilgilerinizi geçici bir not kağıdına (sunucunun hafızası) değil, 
+        // şirketin ana bilgisayarındaki kalıcı kayıt sistemine (veritabanı) işlemesini sağlar. Bu sayede, görevli değişse 
+        // veya elektrikler kesilse (sunucu yeniden başlasa) bile sizin kayıtlarınız kaybolmaz.
     })
 }));
 

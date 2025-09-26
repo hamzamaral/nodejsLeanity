@@ -2,7 +2,7 @@ const config = {
     db: {
         host: "localhost",
         user: "root",
-        password: "sadik123",
+        password: "Hamzababa.123",
         database: "blogdb"
     },
     email: {

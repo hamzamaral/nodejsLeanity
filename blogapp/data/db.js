@@ -6,7 +6,7 @@ const sequelize = new Sequelize(config.db.database, config.db.user, config.db.pa
     dialect: "mysql",
     host: config.db.host,
     define: {
-        timestamps: false
+        timestamps: false //Bu ayar, Sequelize'in varsayılan olarak her tabloya createdAt ve updatedAt adında zaman damgası sütunları eklemesini engeller.
     },
     storage: "./session.mysql"
 });
