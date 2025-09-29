@@ -1,13 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const { User, ValidateUser } = require("../models/user");
+const { User, validateUser } = require("../models/user");
+const bcrypt = require("bcrypt");
 
 router.get("/", async (req, res) => {
     res.send();
 });
 
+// api/users : POST
 router.post("/", async (req, res) => {
-    res.send();
+    const { error } = validateUser(req.body);
+
+    if(error) {
+        return res.status(400).send(error.details[0].message);
+    }
+
+    let user = await User.findOne({ email: req.body.email });
+
+    if(user) {
+        return res.status(400).send("bu mail adresiyle zaten bir kullanıcı mevcut.");
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password: hashedPassword
+    });
+
+    await user.save();
+
+    res.send(user);
 });
 
 
