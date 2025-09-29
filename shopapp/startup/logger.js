@@ -19,7 +19,7 @@ const logger = createLogger({
         new transports.File({filename: "logs/exceptions.log" ,level:"error", handleExceptions: true, handleRejections: true, maxFiles:'3d'}),
         new transports.MongoDB({
             level: 'error',
-            db: `mongodb+srv://${username}:${password}@cluster0.kfjfak2.mongodb.net/${database}?retryWrites=true&w=majority`,
+            db: `mongodb+srv://${username}:${password}@cluster0.4veashr.mongodb.net/${database}?retryWrites=true&w=majority`,
             options: {
                 useUnifiedTopology: true
             },

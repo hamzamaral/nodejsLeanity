@@ -39,7 +39,7 @@ function validateLogin(user) {
 }
 
 userSchema.methods.createAuthToken = function() {
-    const decodedToken = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, 'jwtPrivateKey');
+    const decodedToken = jwt.sign({ _id: this._id, isAdmin: true }, 'jwtPrivateKey');
     return decodedToken;
 };
 

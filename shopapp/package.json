@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development PORT=3000 DB_PASSWORD=MasF8vvuSpRDqiYT JWTPRIVATEKEY=mysecretkey nodemon app.js",
+    "dev": "cross-env NODE_ENV=development PORT=3000 DB_PASSWORD=MasF8vvuSpRDqiYT jwtPrivateKey=jwtPrivateKey nodemon app.js",
     "prod": "NODE_ENV=production PORT=8080 nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,5 +21,8 @@
     "mongoose": "^6.6.1",
     "winston": "^3.8.2",
     "winston-mongodb": "^5.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.0.0"
   }
 }

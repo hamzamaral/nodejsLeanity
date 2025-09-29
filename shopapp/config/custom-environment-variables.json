@@ -1,8 +1,8 @@
 {
-    "db": {
-        "password": "DB_PASSWORD"
-    },
-    "auth": {
-        "jwtPrivateKey": "JWTPRIVATEKEY"
-    }
+  "db": {
+    "password": "DB_PASSWORD"
+  },
+  "auth": {
+    "jwtPrivateKey": "jwtPrivateKey"
+  }
 }
