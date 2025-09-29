@@ -1,6 +1,6 @@
 {
     "db": {
-        "password": "MasF8vvuSpRDqiYT"
+        "password": "DB_PASSWORD"
     },
     "auth": {
         "jwtPrivateKey": "JWTPRIVATEKEY"
