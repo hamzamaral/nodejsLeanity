@@ -10,7 +10,7 @@ const commentSchema = mongoose.Schema({
         default: Date.now
     },
     // user: { type: Schema.Types.ObjectId, ref: "User"}
-});
+}, { autoCreate: false});
 
 const productSchema = mongoose.Schema({
     name: String,
