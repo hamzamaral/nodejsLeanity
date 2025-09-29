@@ -2,14 +2,13 @@ const express = require("express");
 const router = express.Router();
 const { User, validateLogin, validateRegister } = require("../models/user");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 router.get("/", async (req, res) => {
     res.send();
 });
 
-// api/users : POST
-router.post("/", async (req, res) => {
+// api/users/create : POST
+router.post("/create", async (req, res) => {
     const { error } = validateRegister(req.body);
 
     if(error) {
@@ -32,9 +31,12 @@ router.post("/", async (req, res) => {
 
     await user.save();
 
-    res.send(user);
+    const token = user.createAuthToken();
+
+    res.header("x-auth-token", token).send(user);
 });
 
+// api/users/auth : POST
 router.post("/auth", async (req, res) => {
     const { error } = validateLogin(req.body);
 
@@ -52,10 +54,10 @@ router.post("/auth", async (req, res) => {
         return res.status(400).send("hatalı email ya da parola");
     }
 
-    const token = jwt.sign({ _id: user._id }, 'jwtPrivateKey');
+    const token = user.createAuthToken();
 
     res.send(token);
-})
+});
 
 
 module.exports = router;

@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+const auth = require("../middware/auth");
+const isAdmin = require("../middware/isAdmin");
+
 const {Product, Comment, validateProduct} = require("../models/product");
 
 router.get("/", async (req, res) => {
@@ -10,7 +13,8 @@ router.get("/", async (req, res) => {
     res.send(products);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", [auth, isAdmin], async (req, res) => {
+
     const { error } =  validateProduct(req.body);
 
     if(error) {
@@ -31,7 +35,7 @@ router.post("/", async (req, res) => {
     res.send(newProduct);
 });
 
-router.put("/comment/:id", async (req, res) => {
+router.put("/comment/:id", auth, async (req, res) => {
     const product = await Product.findById(req.params.id);
     if(!product) {
         return res.status(404).send("aradığınız ürün bulunamadı.");
@@ -48,7 +52,7 @@ router.put("/comment/:id", async (req, res) => {
     res.send(updatedProduct);
 });
 
-router.delete("/comment/:id", async (req, res) => {
+router.delete("/comment/:id", auth, async (req, res) => {
     const product = await Product.findById(req.params.id);
     if(!product) {
         return res.status(404).send("aradığınız ürün bulunamadı.");
@@ -60,7 +64,7 @@ router.delete("/comment/:id", async (req, res) => {
     res.send(updatedProduct);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     const product = await Product.findById(req.params.id);
     if(!product) {
         return res.status(404).send("aradığınız ürün bulunamadı.");
@@ -84,7 +88,7 @@ router.put("/:id", async (req, res) => {
     res.send(updatedProduct);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth,  async (req, res) => {
     const product = await Product.findByIdAndDelete(req.params.id);
 
     if(!product) {
@@ -94,7 +98,7 @@ router.delete("/:id", async (req, res) => {
     res.send(product);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
     const product = await Product.findById(req.params.id).populate("category","name -_id"); 
 
     if(!product) {
