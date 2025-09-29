@@ -1,15 +1,14 @@
+require('express-async-errors');
 const express = require("express");
 const router = express.Router();
 
-const auth = require("../middware/auth");
-const isAdmin = require("../middware/isAdmin");
+const auth = require("../middleware/auth");
+const isAdmin = require("../middleware/isAdmin");
 
 const {Product, Comment, validateProduct} = require("../models/product");
 
-router.get("/", async (req, res) => {
-    const products = await Product.find()
-                            .populate("category","name -_id")
-                            .select("-isActive -comments._id");
+router.get("/", async (req, res, next) => {
+    const products = await Product.find().populate("category","name -_id").select("-isActive -comments._id");
     res.send(products);
 });
 
@@ -20,7 +19,7 @@ router.post("/", [auth, isAdmin], async (req, res) => {
     if(error) {
         return res.status(400).send(error.details[0].message);
     }
-
+ 
     const product = new Product({
         name: req.body.name,
         price: req.body.price,

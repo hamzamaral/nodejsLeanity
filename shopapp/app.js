@@ -1,35 +1,12 @@
 const express = require("express");
 const app = express();
 
-const mongoose = require("mongoose");
+require("./startup/logger");
+require("./startup/routes")(app);
+require("./startup/db")();
 
-const products = require("./routes/products");
-const categories = require("./routes/categories");
-const users = require("./routes/users");
-const home = require("./routes/home");
+const port = process.env.PORT || 3000;
 
-app.use(express.json());
-
-app.use("/api/products", products);
-app.use("/api/categories", categories);
-app.use("/api/users", users);
-app.use("/", home);
-
-const username = "mhamamaralmhm65_db_user";
-const password = "MasF8vvuSpRDqiYT";
-const database = "nodejsdeneme";
-
-(async () => {
-  try {
-    await mongoose.connect(
-      `mongodb+srv://${username}:${password}@cluster0.4veashr.mongodb.net/${database}?retryWrites=true&w=majority`
-    );
-    console.log("mongodb bağlantısı kuruldu.");
-  } catch (err) {
-    console.log(err);
-  }
-})();
-
-app.listen(3000, () => {
-  console.log("listening on port 3000");
+app.listen(port, () => {
+    console.log(`listening on port ${port}`);
 });
